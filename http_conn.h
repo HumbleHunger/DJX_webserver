@@ -83,7 +83,7 @@ private:
 	bool add_blank_line();
 
 public:
-	/* 所有socket上的时间都被注册到同一个epoll内核事件表中，所以被epoll文件描述符
+	/* 所有socket上的事件都被注册到同一个epoll内核事件表中，所以被epoll文件描述符
 	 * 设置为静态 */
 	 static int m_epollfd;
 	 /* 统计用户数量 */
@@ -92,7 +92,7 @@ public:
 private:
 	/* 读HTTP连接的socket和对方的socket地址 */
 	int m_sockfd;
-	sockaddr_in m_address;
+    sockaddr_in m_address;
 
 	/* 读缓冲区 */
 	char m_read_buf[READ_BUFFER_SIZE];

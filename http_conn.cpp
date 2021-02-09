@@ -62,6 +62,7 @@ void http_conn::close_conn(bool real_close)
 	}
 }
 
+/* 初始化socket信息 */
 void http_conn::init(int sockfd, const sockaddr_in &addr)
 {
 	m_sockfd = sockfd;
@@ -75,6 +76,7 @@ void http_conn::init(int sockfd, const sockaddr_in &addr)
 	init();
 }
 
+/* 初始化工作状态 */
 void http_conn::init()
 {
 	m_checked_state = CHECK_STATE_REQUESTLINE;
@@ -121,7 +123,7 @@ http_conn::LINE_STATUS http_conn::parse_line()
 	return LINE_OPEN;
 }
 
-/* 循环读取客户数据，知道无数据可读或者对方关闭连接 */
+/* 循环读取客户数据，直到无数据可读或者对方关闭连接 */
 bool http_conn::read()
 {
 	if (m_read_idx >= READ_BUFFER_SIZE)
@@ -381,7 +383,7 @@ bool http_conn::write()
 				modfd(m_epollfd, m_sockfd, EPOLLOUT);
 				return true;
 			}
-
+			/* 写操作出现异常 */
 			unmap();
 			return false;
 		}
@@ -390,7 +392,7 @@ bool http_conn::write()
 		bytes_have_send += temp;
 		if (bytes_to_send <= bytes_have_send)
 		{
-			/* 发送HTTP响应成功，根据HTTP请求中的Connection字段决定是否理解关闭连接 */
+			/* 发送HTTP响应成功，根据HTTP请求中的Connection字段决定是否立即关闭连接 */
 			unmap();
 			if (m_linger)
 			{
@@ -538,7 +540,7 @@ bool http_conn::process_write(HTTP_CODE ret)
 	return true;
 }
 
-/* 有线程池中的工作线程调用，这是处理HTTP请求的入口函数 */
+/* 由线程池中的工作线程调用，这是处理HTTP请求的入口函数 */
 void http_conn::process()
 {
 	HTTP_CODE read_ret = process_read();
