@@ -97,25 +97,31 @@ void http_conn::init()
 	memset(m_real_file, '\0', FILENAME_LEN);
 }
 
-/* 从状态机 */
+/*  从状态机 
+	判断是否读入完整行*/
 http_conn::LINE_STATUS http_conn::parse_line()
 {
 	char temp;
 	for (; m_checked_idx < m_read_idx; ++m_checked_idx)
 	{
 		temp = m_read_buf[m_checked_idx];
+
 		if (temp == '\r')
 		{
+			/*数据不完整*/
 			if ((m_checked_idx + 1) == m_read_idx)
 			{
 				return LINE_OPEN;
 			}
+			/*读取到\r\n则行完整*/
 			else if (m_read_buf[m_checked_idx + 1] == '\n')
 			{
+				//将\r\n修改为\0\0
 				m_read_buf[m_checked_idx++] = '\0';
 				m_read_buf[m_checked_idx++] = '\0';
 				return LINE_OK;
 			}
+			//数据格式错误
 			return LINE_BAD;
 		}
 	}
