@@ -134,6 +134,7 @@ int main(int argc, char *argv[])
 			}
 			else if (events[i].events & EPOLLIN)
 			{
+				printf("epoll have EPOLLIN\n");
 				/* 根据读的结果，决定是将任务加到线程池，还是关闭连接 */
 				if (users[sockfd].read())
 				{

@@ -12,7 +12,7 @@ const char *error_500_title = "Internal Error";
 const char *error_500_form = "There was an unusual problem serving the requested file.\n";
 
 /* 网站的根目录 */
-const char *doc_root = "/var/www/html";
+const char *doc_root = "./var/www/html";
 
 int setnonblocking(int fd)
 {
@@ -269,12 +269,13 @@ http_conn::HTTP_CODE http_conn::parse_content(char *text)
 /* 主状态机 */
 http_conn::HTTP_CODE http_conn::process_read()
 {
+	printf("process_read run\n");
 	LINE_STATUS line_status = LINE_OK;
 	HTTP_CODE ret = NO_REQUEST;
 	char *text = 0;
 	//依次检查buffer中行是否完整将\r\n改为\0\0并从buffer中依次取出所有完整的行
 	while (((m_checked_state == CHECK_STATE_CONTENT) && (line_status == LINE_OK))
-		|| ((line_status == parse_line()) == LINE_OK))
+		|| ((line_status = parse_line()) == LINE_OK))
 	{
 		//获取行在buffer中开始的地址
 		text = get_line();
@@ -554,6 +555,7 @@ bool http_conn::process_write(HTTP_CODE ret)
 /* 由线程池中的工作线程调用，这是处理HTTP请求的入口函数 */
 void http_conn::process()
 {
+	printf("process run\n");
 	HTTP_CODE read_ret = process_read();
 	if (read_ret == NO_REQUEST)
 	{
