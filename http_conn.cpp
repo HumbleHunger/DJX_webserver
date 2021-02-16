@@ -272,16 +272,19 @@ http_conn::HTTP_CODE http_conn::process_read()
 	LINE_STATUS line_status = LINE_OK;
 	HTTP_CODE ret = NO_REQUEST;
 	char *text = 0;
-
+	//依次检查buffer中行是否完整将\r\n改为\0\0并从buffer中依次取出所有完整的行
 	while (((m_checked_state == CHECK_STATE_CONTENT) && (line_status == LINE_OK))
 		|| ((line_status == parse_line()) == LINE_OK))
 	{
+		//获取行在buffer中开始的地址
 		text = get_line();
+		//记录下一行的起始位置
 		m_start_line = m_checked_idx;
 		printf("got 1 http line: %s\n", text);
 
 		switch (m_checked_state)
 		{
+			//分析请求行
 			case CHECK_STATE_REQUESTLINE:
 			{
 				ret = parse_request_line(text);
@@ -291,6 +294,7 @@ http_conn::HTTP_CODE http_conn::process_read()
 				}
 				break;
 			}
+			//分析首部字段
 			case CHECK_STATE_HEADER:
 			{
 				ret = parse_headers(text);
@@ -304,6 +308,7 @@ http_conn::HTTP_CODE http_conn::process_read()
 				}
 				break;
 			}
+			//分析数据
 			case CHECK_STATE_CONTENT:
 			{
 				ret = parse_content(text);

@@ -35,7 +35,7 @@ public:
  	主状态机的三种可能状态
 	CHECK_STATE_REQUESTLINE:当前正在分析请求行
 	CHECK_STATE_HEADER:当前正在分析头部字段
-	CHECK_STATE_CONTENT:当前分析完成*/   
+	CHECK_STATE_CONTENT:当前正在分析数据*/   
 	enum CHECK_STATE {CHECK_STATE_REQUESTLINE = 0, CHECK_STATE_HEADER, CHECK_STATE_CONTENT};
 	/* 服务器处理HTTP请求的可能结果
 	 * 服务器处理HTTP请求的结果: 
