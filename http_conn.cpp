@@ -160,14 +160,17 @@ bool http_conn::read()
 /* 解析HTTP请求行，获得请求方法、目标URL，以及HTTP版本号 */
 http_conn::HTTP_CODE http_conn::parse_request_line(char *text)
 {
+	//找到第一个空格
 	m_url = strpbrk(text, " \t");
 	if (!m_url)
 	{
 		return BAD_REQUEST;
 	}
+	//将空格变为\0
 	*m_url++ = '\0';
 
 	char *method = text;
+	//仅支持GET
 	if (strcasecmp(method, "GET") == 0)
 	{
 		m_method = GET;
@@ -176,19 +179,24 @@ http_conn::HTTP_CODE http_conn::parse_request_line(char *text)
 	{
 		return BAD_REQUEST;
 	}
-
+	//移动到url开始位置
 	m_url += strspn(m_url, " \t");
+	//找到第二个空格
 	m_version = strpbrk(m_url, " \t");
 	if (!m_version)
 	{
 		return BAD_REQUEST;
 	}
+	//将第二个空格改为\0
 	*m_version++ = '\0';
+	//移动到HTTP协议版本位置
 	m_version += strspn(m_version, " \t");
+	//仅支持HTTP1.1
 	if (strcasecmp(m_version, "HTTP/1.1") != 0)
 	{
 		return BAD_REQUEST;
 	}
+	//定位到文件名
 	if (strncasecmp(m_url, "http://", 7) == 0)
 	{
 		m_url += 7;
