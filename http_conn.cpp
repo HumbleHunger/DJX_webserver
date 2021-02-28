@@ -383,7 +383,7 @@ bool http_conn::write()
 	int temp = 0;
 	int bytes_have_send = 0;
 	int bytes_to_send = m_write_idx;
-
+	//当数据发送完成则重置http_conn
 	if (bytes_to_send == 0)
 	{
 		modfd(m_epollfd, m_sockfd, EPOLLIN);
