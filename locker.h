@@ -122,4 +122,4 @@ private:
     pthread_cond_t m_cond;
 };
 
-#endif //__LOCKER_H
+#endif
